@@ -108,21 +108,28 @@ void main()
     bool b;
     vec3 intersection = ray_marching(cam_pos.xyz,dir,b);
     //commit de loris float lum = abs(dot(dir,normalize(cam_pos.xyz-intersection)))/2.;
+    //demander pourquoi la map n'est pas prise en compte
     if (b) discard;
     vec3 normal = get_scene_normal(intersection);
     vec3 light_dir = normalize(sun_light.xyz);
     float light_intensity = max(0.0,dot(normal,light_dir))*sun_light.w;
     pixel_color = vec4(light_intensity,light_intensity,light_intensity,1.0);
     //give the blob at min distnace from pos
+    int index = 0;
     for (int i =0; i< blob_data.length(); i++)
     {
-    //todo : do better
-        if (length(intersection-blob_data[i].p.xyz)<200.0)
+    //todo : work but try to do better
+        /*if (length(intersection-blob_data[i].p.xyz)<200.0)
         {
             pixel_color = pixel_color * player_color[int(blob_data[i].p.w)];
+        }*/
+        if (length(intersection-blob_data[i].p.xyz)<length(intersection-blob_data[index].p.xyz))
+        {
+            index = i;
         }
     }
-    //pixel_color = vec4(0.5,0.,0.,1.0);
+    pixel_color = pixel_color * player_color[int(blob_data[index].p.w)];
+        //pixel_color = vec4(0.5,0.,0.,1.0);
     gl_FragDepth = get_ndc_depth(intersection);
     //commit de loris pixel_color = vec4(0.5*lum,0.,0.,1.0);
 }
