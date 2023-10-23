@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/src/thirdparties/imgui
+# Install script for directory: C:/JIN/Paint-War-Project-OpenGL/Projet/src/thirdparties/imgui
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

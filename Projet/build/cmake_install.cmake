@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet
+# Install script for directory: C:/JIN/Paint-War-Project-OpenGL/Projet
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,22 +34,22 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/build/src/thirdparties/glm/cmake_install.cmake")
+  include("C:/JIN/Paint-War-Project-OpenGL/Projet/build/src/thirdparties/glm/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/build/src/thirdparties/glad/cmake_install.cmake")
+  include("C:/JIN/Paint-War-Project-OpenGL/Projet/build/src/thirdparties/glad/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/build/src/thirdparties/glfw/cmake_install.cmake")
+  include("C:/JIN/Paint-War-Project-OpenGL/Projet/build/src/thirdparties/glfw/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/build/src/thirdparties/imgui/cmake_install.cmake")
+  include("C:/JIN/Paint-War-Project-OpenGL/Projet/build/src/thirdparties/imgui/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -60,5 +60,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/JIN/Paint-War-Project-OpenGL/Projet/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

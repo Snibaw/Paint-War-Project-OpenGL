@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/src/thirdparties/glfw
+# Install script for directory: C:/JIN/Paint-War-Project-OpenGL/Projet/src/thirdparties/glfw
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,6 +34,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/sniba/Desktop/Cours_TSP/Rendu/Projet/build/src/thirdparties/glfw/src/cmake_install.cmake")
+  include("C:/JIN/Paint-War-Project-OpenGL/Projet/build/src/thirdparties/glfw/src/cmake_install.cmake")
 endif()
 

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\build\CMakeFiles\434f4dfdfbe0ea3e0f6a7114fb4f1b66\INSTALL_force.rule">
+    <CustomBuild Include="C:\JIN\Paint-War-Project-OpenGL\Projet\build\CMakeFiles\847f84d6c426c3babe2ec6c08fbb3d5f\INSTALL_force.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{15B4919C-E3F9-3AFD-8ECD-24FC97868850}</UniqueIdentifier>
+      <UniqueIdentifier>{5AAB598D-F226-39D1-AA03-BCBD0597F4BB}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
