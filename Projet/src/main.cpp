@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 	//WorldView matrix
 	FreeFlyCamera cam; // Maybe this class will be modified to have a "walk" mode (forced just above the ground)
 	cam.set_camera(vec3(0.f,1500.0f,-30.0f),90.f,-90.0f);
-	cam.set_params(0.f,0.f,0.f);
+	cam.set_params(0.1f,10.f,50.f);
 
 
 	Game game;
@@ -78,18 +78,14 @@ int main(int argc, char* argv[]) {
 		game.write_params_to_application_struct(app_ubo_data);
 		application_ubo.write_to_gpu(&app_ubo_data);
 
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
-		glDisable(GL_DEPTH_TEST);
-		m_shader_blob_raymarcher.use_shader_program();//Shader to draw texture filled in compute shader to screen
-		glDrawArrays(GL_TRIANGLES, 0, 3);//Screen-filling triangle => 1 FS invocation per pixel
-		glEnable(GL_DEPTH_TEST);
-		glFlush();
+		
+
 
 
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear Frambuffer channel + Z-buffer 
 		game.draw_map();
+		game.draw_blob();
 		glFinish();//Force wait for GPU to finish jobs, since the post_process shader will read from rendered textures
 
 

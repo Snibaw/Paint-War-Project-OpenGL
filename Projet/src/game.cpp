@@ -214,6 +214,26 @@ void Game::draw_map()
 	glFlush();
 }
 
+void Game::draw_blob()
+{
+	vao_dummy.use_vao();
+	m_shader_blob_raymarcher->use_shader_program();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);//2 triangle to draw a quad of the scene
+	glFlush();
+}
+
+
+/*
+void Game::draw_blob()
+{
+	glDisable(GL_DEPTH_TEST);
+	m_shader_blob_raymarcher->use_shader_program();//Shader to draw texture filled in compute shader to screen
+	glDrawArrays(GL_TRIANGLES, 0, 3);//Screen-filling triangle => 1 FS invocation per pixel
+	glEnable(GL_DEPTH_TEST);
+	glFlush();
+}
+*/
+
 
 
 void Game::gui(ApplicationUboDataStructure& app_ubo)

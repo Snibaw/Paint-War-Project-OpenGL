@@ -26,6 +26,8 @@ public:
 
 	void draw_map();
 
+	void draw_blob();
+
 	void gui(ApplicationUboDataStructure& app_ubo);
 
 private:

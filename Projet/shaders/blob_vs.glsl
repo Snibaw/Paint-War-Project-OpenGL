@@ -35,7 +35,7 @@ void main()
 		vec4 v = vec4(-1.0,-1.0,0.0,1.0);
 		vec4 vp = inv_w_v_p * v;
 		vp /= vp.w;
-		dir_ws = (normalize(vp - cam_pos)).xyz;           //vec3(1.0);//To modify
+		dir_ws = (normalize(vp - cam_pos)).xyz;          
 		gl_Position = v;
 	}
 	else if(gl_VertexID==1)
@@ -43,7 +43,7 @@ void main()
 		vec4 v = vec4(1.0,-1.0,0.0,1.0);
 		vec4 vp = inv_w_v_p * v;
 		vp /= vp.w;
-		dir_ws = (normalize(vp - cam_pos)).xyz;           //vec3(1.0);//To modify
+		dir_ws = (normalize(vp - cam_pos)).xyz;           
 		gl_Position = v;
 	}
 	else if(gl_VertexID==2)
@@ -51,7 +51,7 @@ void main()
 		vec4 v = vec4(-1.0,1.0,0.0,1.0);
 		vec4 vp = inv_w_v_p * v;
 		vp /= vp.w;
-		dir_ws = (normalize(vp - cam_pos)).xyz;           //vec3(1.0);//To modify
+		dir_ws = (normalize(vp - cam_pos)).xyz;          
 		gl_Position = v;
 	}
 	else //(gl_VertexID==3)
@@ -59,7 +59,7 @@ void main()
 		vec4 v = vec4(1.0,1.0,0.0,1.0);
 		vec4 vp = inv_w_v_p * v;
 		vp /= vp.w;
-		dir_ws = (normalize(vp - cam_pos)).xyz;           //vec3(1.0);//To modify
+		dir_ws = (normalize(vp - cam_pos)).xyz;          
 		gl_Position = v;
 	}
 }
