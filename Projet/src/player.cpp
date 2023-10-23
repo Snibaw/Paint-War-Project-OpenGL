@@ -68,7 +68,7 @@ Blob* Player::get_init_blobs_data(vec2 start_offset_ws, int blob_count_player)
 	{ 
 	float float_blob_id = float(blob_id) / blob_count_player;
 	//blob rain effect at start !
-	vec3 pos = vec3(start_offset_ws.x*0.75f, (float_blob_id+0.5f) * start_offset_ws.x / 10.0f, start_offset_ws.y*0.75f);
+	vec3 pos = vec3(start_offset_ws.x*0.75f, -(float_blob_id+0.5f) * start_offset_ws.x / 10.0f, start_offset_ws.y*0.75f);
 
 	if (m_id == 0 || m_id == 1)
 		pos.x *= -1.0f;

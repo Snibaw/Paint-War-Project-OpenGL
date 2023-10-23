@@ -78,11 +78,6 @@ int main(int argc, char* argv[]) {
 		game.write_params_to_application_struct(app_ubo_data);
 		application_ubo.write_to_gpu(&app_ubo_data);
 
-		
-
-
-
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear Frambuffer channel + Z-buffer 
 		game.draw_map();
 		game.draw_blob();

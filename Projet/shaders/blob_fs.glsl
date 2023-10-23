@@ -27,6 +27,20 @@ layout(binding = 0, std140) uniform UBO_APPLICATION
     vec4 sun_light;//.xyz: direction, .w:intensity
 };
 
+//Access SSBOs in shader as follow;
+struct Blob {//Mind GPU alignment !
+	vec4 p;//.xyz: pos, .w: playerID
+	vec4 v;//speed
+};
+
+layout(std430, binding = 0) readonly buffer SSBO_BLOBS_DATA
+{
+	Blob blob_data[];
+};
+layout(std430, binding = 1) readonly buffer SSBO_SCORE
+{
+	uvec4 player_score;
+};
 
 
 float get_ndc_depth(vec3 intersection);
@@ -47,9 +61,12 @@ float sphere(vec3 pos,vec3 center, float radius)
 
 float scene(vec3 pos)//The scene we consider in this TP
 {
-	float u = sphere(pos,vec3(100.,50.,0.),50.0);
-
-    u = min(u,sphere(pos,vec3(60.,50.,0.),50.0));
+	float u = sphere(pos,blob_data[0].p.xyz,20.0);
+    
+    for (int i=0; i< blob_data.length(); i++)
+    {
+        u = min(u,sphere(pos,blob_data[i].p.xyz,20.0));
+    }
 	return u;
 }
 
@@ -62,7 +79,6 @@ float scene(vec3 pos)//The scene we consider in this TP
 //Returns position in WS when reaching the "zero" of the SDF
 vec3 ray_marching(vec3 ray_ori,vec3 ray_dir,out bool back)
 {
-	//Write raymarcher here
     back = false;
     float t=0.0;
     vec3 pos;
@@ -91,10 +107,24 @@ void main()
     vec3 dir = normalize(dir_ws);
     bool b;
     vec3 intersection = ray_marching(cam_pos.xyz,dir,b);
-    float lum = abs(dot(dir,normalize(cam_pos.xyz-intersection)))/2.;
+    //commit de loris float lum = abs(dot(dir,normalize(cam_pos.xyz-intersection)))/2.;
     if (b) discard;
-    pixel_color = vec4(0.5*lum,0.,0.,1.0);
+    vec3 normal = get_scene_normal(intersection);
+    vec3 light_dir = normalize(sun_light.xyz);
+    float light_intensity = max(0.0,dot(normal,light_dir))*sun_light.w;
+    pixel_color = vec4(light_intensity,light_intensity,light_intensity,1.0);
+    //give the blob at min distnace from pos
+    for (int i =0; i< blob_data.length(); i++)
+    {
+    //todo : do better
+        if (length(intersection-blob_data[i].p.xyz)<200.0)
+        {
+            pixel_color = pixel_color * player_color[int(blob_data[i].p.w)];
+        }
+    }
+    //pixel_color = vec4(0.5,0.,0.,1.0);
     gl_FragDepth = get_ndc_depth(intersection);
+    //commit de loris pixel_color = vec4(0.5*lum,0.,0.,1.0);
 }
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,10 +151,3 @@ vec3 get_scene_normal(vec3 p) // for function f(p)
                       k.yxy*scene( p + k.yxy*h ) + 
                       k.xxx*scene( p + k.xxx*h ) );
 }
-
-
-
-
-
-
-
