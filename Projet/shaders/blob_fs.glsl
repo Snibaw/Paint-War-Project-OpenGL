@@ -91,9 +91,10 @@ void main()
     vec3 dir = normalize(dir_ws);
     bool b;
     vec3 intersection = ray_marching(cam_pos.xyz,dir,b);
+    float lum = abs(dot(dir,normalize(cam_pos.xyz-intersection)))/2.;
     if (b) discard;
-        pixel_color = vec4(0.5,0.,0.,1.0);
-        gl_FragDepth = get_ndc_depth(intersection);
+    pixel_color = vec4(0.5*lum,0.,0.,1.0);
+    gl_FragDepth = get_ndc_depth(intersection);
 }
 ////////////////////////////////////////////////////////////////////////////////////
 
