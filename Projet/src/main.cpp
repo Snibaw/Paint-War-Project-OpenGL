@@ -42,7 +42,6 @@ int main(int argc, char* argv[]) {
 
 
 
-
 	//UBO init
 	ApplicationUboDataStructure app_ubo_data;
 	GPUBuffer application_ubo;
@@ -78,6 +77,14 @@ int main(int argc, char* argv[]) {
 		app_ubo_data.cam_pos = vec4(cam.m_pos, ContextHelper::time_from_start_s);
 		game.write_params_to_application_struct(app_ubo_data);
 		application_ubo.write_to_gpu(&app_ubo_data);
+
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
+		glDisable(GL_DEPTH_TEST);
+		m_shader_blob_raymarcher.use_shader_program();//Shader to draw texture filled in compute shader to screen
+		glDrawArrays(GL_TRIANGLES, 0, 3);//Screen-filling triangle => 1 FS invocation per pixel
+		glEnable(GL_DEPTH_TEST);
+		glFlush();
 
 
 

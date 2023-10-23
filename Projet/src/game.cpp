@@ -4,6 +4,8 @@ Game::Game()
 {
 	m_shader_map = new ShaderGLSL("shader_map");
 	m_shader_environment = new ShaderGLSL("shader_background");
+	m_shader_blob_raymarcher = new ShaderGLSL("shader_blob");
+
 	//Init all shaders here
 	for (int i = 0; i < 4; i++)
 		m_player[i].set_id(i);
@@ -67,8 +69,14 @@ void Game::load_shaders(std::string base_path)
 	m_shader_environment->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_environment);
 
+	m_shader_blob_raymarcher->add_shader(GL_VERTEX_SHADER, base_path, "shaders/blob_vs.glsl"); //changed
+	m_shader_blob_raymarcher->add_shader(GL_FRAGMENT_SHADER, base_path, "shaders/blob_fs.glsl");
+	m_shader_blob_raymarcher->compile_and_link_to_program();
+	ContextHelper::add_shader_to_hot_reload(m_shader_blob_raymarcher);
 	//...
 }
+
+
 
 void Game::init_game()
 {
