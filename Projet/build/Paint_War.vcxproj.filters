@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\game.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\main.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\player.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\buffers_helper.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\camera_helper.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\context_helper.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\debug_opengl.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\shader_helper.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\texture_helper.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\buffer_structures.hpp">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\game.hpp">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\player.hpp">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\buffers_helper.hpp">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\camera_helper.hpp">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\context_helper.hpp">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\debug_opengl.hpp">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\helpers_common.hpp">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\shader_helper.hpp">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\src\helpers\texture_helper.hpp">
+      <Filter>helpers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\shaders\environment_fs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\shaders\environment_vs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\shaders\map_fs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="C:\Users\sniba\Desktop\Cours_TSP\Rendu\Projet\shaders\map_vs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="helpers">
+      <UniqueIdentifier>{0F425EC6-4CDF-3908-B912-498760AA336D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{175FB9DE-7543-35B2-A854-9B9E1EA5C87A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{A67A245B-228F-3FFB-9F7F-63559924AB25}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
