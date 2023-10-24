@@ -23,7 +23,7 @@ public:
 	Player();
 	void set_id(int id);
 	Blob* get_init_blobs_data(vec2 start_offset_ws, int blob_count_player);//each player starts in a "corner"
-	void poll_direction();
+	void poll_direction(float magnitude);
 	void write_params_to_application_struct(ApplicationUboDataStructure& app_ubo);
 	void set_score(std::uint32_t score);
 	std::uint32_t get_score();

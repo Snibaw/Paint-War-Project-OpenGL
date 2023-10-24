@@ -31,7 +31,7 @@ void Player::set_id(int id)
 }
 
 
-void Player::poll_direction()
+void Player::poll_direction(float magnitude)
 {
 	float lr = 0.0f;//1.0: right, -1.0: left //x_ws axis
 	float ud = 0.0f;//1.0: up, -1.0: down //z_ws axis
@@ -46,9 +46,9 @@ void Player::poll_direction()
 		ud = -1.0f;
 
 	if (lr != 0.0f || ud != 0.0f)//avoid normalizing null vector !
-		m_direction = vec4(lr, 0.0f, ud, 1.0f);
+		m_direction = vec4(lr, 0.0f, ud, magnitude);
 	else
-		m_direction = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		m_direction = vec4(0.0f, 0.0f, 0.0f, magnitude);
 }
 
 void Player::set_score(std::uint32_t score)

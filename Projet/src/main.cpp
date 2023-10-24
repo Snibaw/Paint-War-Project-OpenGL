@@ -78,9 +78,14 @@ int main(int argc, char* argv[]) {
 		game.write_params_to_application_struct(app_ubo_data);
 		application_ubo.write_to_gpu(&app_ubo_data);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear Frambuffer channel + Z-buffer 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear Frambuffer channel + Z-buffer
+		game.poll_players_input();
+		game.compute_blob_speed();
+		game.compute_blob_position();
+
 		game.draw_map();
 		game.draw_blob();
+
 		glFinish();//Force wait for GPU to finish jobs, since the post_process shader will read from rendered textures
 
 

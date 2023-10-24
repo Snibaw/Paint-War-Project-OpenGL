@@ -6,6 +6,11 @@ Game::Game()
 	m_shader_environment = new ShaderGLSL("shader_background");
 	m_shader_blob_raymarcher = new ShaderGLSL("shader_blob");
 
+	m_shader_compute_v = new ShaderGLSL("shader_compute_v");
+	m_shader_compute_p = new ShaderGLSL("shader_compute_p");
+	m_shader_compute_paint = new ShaderGLSL("shader_compute_paint");
+	m_shader_count_score = new ShaderGLSL("shader_count_score");
+	
 	//Init all shaders here
 	for (int i = 0; i < 4; i++)
 		m_player[i].set_id(i);
@@ -73,7 +78,24 @@ void Game::load_shaders(std::string base_path)
 	m_shader_blob_raymarcher->add_shader(GL_FRAGMENT_SHADER, base_path, "shaders/blob_fs.glsl");
 	m_shader_blob_raymarcher->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_blob_raymarcher);
-	//...
+	
+	m_shader_compute_v->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/blob_speed_cs.glsl");
+	m_shader_compute_v->compile_and_link_to_program();
+	ContextHelper::add_shader_to_hot_reload(m_shader_compute_v);
+
+	m_shader_compute_p->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/blob_physics_cs.glsl");
+	m_shader_compute_p->compile_and_link_to_program();
+	ContextHelper::add_shader_to_hot_reload(m_shader_compute_p);
+
+	//TODO : uncomment when compute shader are added
+	/*
+	m_shader_compute_paint->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/paint_cs.glsl");
+	m_shader_compute_paint->compile_and_link_to_program();
+	ContextHelper::add_shader_to_hot_reload(m_shader_compute_paint);
+
+	m_shader_count_score->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/score_cs.glsl");
+	m_shader_count_score->compile_and_link_to_program();
+	ContextHelper::add_shader_to_hot_reload(m_shader_count_score);*/
 }
 
 
@@ -199,7 +221,7 @@ void Game::write_params_to_application_struct(ApplicationUboDataStructure& app_u
 void Game::poll_players_input()
 {
 	for (int i = 0; i < m_player_count; i++)
-		m_player[i].poll_direction();
+		m_player[i].poll_direction(m_player_input_magnitude);
 }
 
 
@@ -234,7 +256,34 @@ void Game::draw_blob()
 }
 */
 
+void Game::compute_blob_speed()
+{
+	m_shader_compute_v->use_shader_program();
+	const uvec2 dispatch_count = (ContextHelper::resolution - uvec2(1,1)) / (m_work_group_2d_count)+uvec2(1, 1);
+	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
+	glFlush();
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
 
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
+	//	when uncommented makes map disapear idk why
+	//glDisable(GL_DEPTH_TEST);
+}
+
+
+void Game::compute_blob_position()
+{
+	m_shader_compute_p->use_shader_program();
+	const uvec2 dispatch_count = (ContextHelper::resolution - uvec2(1,1)) / (m_work_group_2d_count)+uvec2(1, 1);
+	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
+	//glFlush();
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
+	//	when uncommented makes map disapear idk why
+	//glDisable(GL_DEPTH_TEST);
+}
 
 void Game::gui(ApplicationUboDataStructure& app_ubo)
 {

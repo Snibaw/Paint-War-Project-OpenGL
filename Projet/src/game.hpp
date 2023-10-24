@@ -25,8 +25,10 @@ public:
 	void console_print_scores();
 
 	void draw_map();
-
 	void draw_blob();
+
+	void compute_blob_speed();
+	void compute_blob_position();
 
 	void gui(ApplicationUboDataStructure& app_ubo);
 
