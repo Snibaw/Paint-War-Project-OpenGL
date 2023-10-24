@@ -1,5 +1,5 @@
 #version 460
-layout (local_size_x = 16, local_size_y = 16,local_size_z = 1) in;
+layout (local_size_x = 32, local_size_y = 1,local_size_z = 1) in;
 
 //matches buffer_structures.hpp
 layout(binding = 0, std140) uniform UBO_APPLICATION
@@ -43,7 +43,5 @@ layout(std430, binding = 1) readonly buffer SSBO_SCORE
 
 void main(){
     //change blob position of the players using their input
-    for (int j = 0; j < map_dim.z; j++){
-        blob_data[j].v.xyz = player_direction[int(blob_data[j].p.w)].xyz * player_direction[int(blob_data[j].p.w)].w;        
-    }  
+    blob_data[gl_GlobalInvocationID.x].v.xyz = player_direction[int(blob_data[gl_GlobalInvocationID.x].p.w)].xyz * player_direction[int(blob_data[gl_GlobalInvocationID.x].p.w)].w;
 }

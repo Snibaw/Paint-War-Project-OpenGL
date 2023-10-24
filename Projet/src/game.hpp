@@ -109,6 +109,7 @@ private:
 	vec2 m_map_offset;
 	uvec2 m_map_resolution;
 	uvec2 m_work_group_2d_count;//supposes 16x16x1 workgroup size for 2D computes
+	int m_work_group_1d_count;
 };
 
 #endif

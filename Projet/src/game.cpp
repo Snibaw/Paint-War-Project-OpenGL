@@ -34,7 +34,7 @@ Game::Game()
 	m_time_limit_s = 60.0f;
 	m_player_count = 2;
 	m_blobs_per_player = 16;
-	m_player_input_magnitude = 1.0f;
+	m_player_input_magnitude = 1000.0f;
 
 	m_ground_friction = 0.01f;
 	m_fluid_friction = 0.01f;
@@ -102,6 +102,7 @@ void Game::load_shaders(std::string base_path)
 
 void Game::init_game()
 {
+	m_work_group_1d_count = 32;
 	//Map resolution
 	if (m_map_quality == 0)//Bad
 	{
@@ -259,11 +260,10 @@ void Game::draw_blob()
 void Game::compute_blob_speed()
 {
 	m_shader_compute_v->use_shader_program();
-	const uvec2 dispatch_count = (ContextHelper::resolution - uvec2(1,1)) / (m_work_group_2d_count)+uvec2(1, 1);
-	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
+	const int dispatch_count = (m_total_blob_count - 1) / (32)+1;
+	glDispatchCompute(dispatch_count, 1, 1);
 	glFlush();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
-
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
 	//	when uncommented makes map disapear idk why
@@ -274,8 +274,8 @@ void Game::compute_blob_speed()
 void Game::compute_blob_position()
 {
 	m_shader_compute_p->use_shader_program();
-	const uvec2 dispatch_count = (ContextHelper::resolution - uvec2(1,1)) / (m_work_group_2d_count)+uvec2(1, 1);
-	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
+	const int dispatch_count = (m_total_blob_count - 1) / 32 + 1;
+	glDispatchCompute(dispatch_count, 1, 1);
 	//glFlush();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
 
@@ -309,7 +309,7 @@ void Game::gui(ApplicationUboDataStructure& app_ubo)
 		ImGui::SliderInt("Blobs count per player", &(blobs_per_player), 1, 512);
 		m_blobs_per_player = blobs_per_player;
 		ImGui::SliderFloat("Time limit (sec)", &(m_time_limit_s), 10.0f, 300.0f);
-		ImGui::SliderFloat("Acceleration multiplier", &(m_player_input_magnitude), 0.1f, 10.0f);
+		ImGui::SliderFloat("Acceleration multiplier", &(m_player_input_magnitude), 100.f, 5000.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Players color"))
