@@ -44,4 +44,6 @@ layout(std430, binding = 1) readonly buffer SSBO_SCORE
 void main(){
     //change blob position of the players using their input
     blob_data[gl_GlobalInvocationID.x].v.xyz = player_direction[int(blob_data[gl_GlobalInvocationID.x].p.w)].xyz * player_direction[int(blob_data[gl_GlobalInvocationID.x].p.w)].w;
+    //apply gravity
+    blob_data[gl_GlobalInvocationID.x].v.y -= physics_params.x * physics_params.y * 1000; // jsp pq oblige de *1000, a regler dans le parametre de la gravite directement peut etre
 }

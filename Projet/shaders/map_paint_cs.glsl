@@ -1,9 +1,8 @@
 #version 460
-#define UBO_APPLICATION_BINDING 0
-layout (location = 0) out vec4 pixel_color;
+layout (local_size_x = 16, local_size_y = 16,local_size_z = 1) in;
 
 //matches buffer_structures.hpp
-layout(binding = UBO_APPLICATION_BINDING, std140) uniform UBO_APPLICATION
+layout(binding = 0, std140) uniform UBO_APPLICATION
 {
     //General
     mat4 proj; //projection matrix (view to eye)
@@ -27,36 +26,30 @@ layout(binding = UBO_APPLICATION_BINDING, std140) uniform UBO_APPLICATION
     vec4 sun_light;//.xyz: direction, .w:intensity
 };
 
-in vec2 tex_coord;
-in vec3 pos_ws;
+//Access SSBOs in shader as follow;
+struct Blob {//Mind GPU alignment !
+	vec4 p;//.xyz: pos, .w: playerID
+	vec4 v;//speed
+};
 
-layout(binding = 0) uniform sampler2D tex_map;
-
-//remove when deleting color writing test
-layout(binding = 0, rgba32f) uniform image2D img_map;
-
-void main() 
+layout(std430, binding = 0) buffer SSBO_BLOBS_DATA
 {
-    vec4 data = texture(tex_map,tex_coord);
-    vec3 n = vec3(data.x,sqrt(max(0.0,1.0-data.x*data.x - data.z*data.z)),data.z);
-    float timestamp = data.z;
-    int player_id = int(data.w);
+	Blob blob_data[];
+};
+layout(std430, binding = 1) readonly buffer SSBO_SCORE
+{
+	uvec4 player_score;
+};
 
-    vec3 color = player_color[player_id].rgb;
+layout(binding = 0, rgba32f) uniform image2D tex_map;
 
-    //texture write test
-    /*if (gl_FragCoord.x>150 && gl_FragCoord.x<170 && gl_FragCoord.y>150 && gl_FragCoord.y<170)//center of brush is at screen coords (160,160)
-    {
-        ivec2 texel_coord = ivec2(tex_coord * map_dim.xy);
-        imageStore(img_map,texel_coord,vec4(0.0,0.0,0.0,1.0));
+void main() {
+    /*const ivec2 tex_coords = ivec2(gl_GlobalInvocationID.xy);
+    //ignore out of bound threads
+    if (tex_coords.x >= map_dim.x || tex_coords.y >= map_dim.y) 
+        return;
+    for (int i=0; i<m_total_blob_count; i++){
+        
     }*/
-
-
-
-    if (texture(tex_map,tex_coord).xyz != vec3(0.0,0.0,0.0))
-        pixel_color = texture(tex_map,tex_coord);
-    else
-        pixel_color = vec4(color,1.0);
-
+    
 }
-

@@ -29,6 +29,7 @@ public:
 
 	void compute_blob_speed();
 	void compute_blob_position();
+	void compute_map_paint();
 
 	void gui(ApplicationUboDataStructure& app_ubo);
 

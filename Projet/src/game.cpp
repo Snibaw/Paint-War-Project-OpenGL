@@ -87,12 +87,12 @@ void Game::load_shaders(std::string base_path)
 	m_shader_compute_p->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_compute_p);
 
-	//TODO : uncomment when compute shader are added
-	/*
-	m_shader_compute_paint->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/paint_cs.glsl");
+	m_shader_compute_paint->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/map_paint_cs.glsl");
 	m_shader_compute_paint->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_compute_paint);
 
+	//TODO : uncomment when compute shader are added
+	/*
 	m_shader_count_score->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/score_cs.glsl");
 	m_shader_count_score->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_count_score);*/
@@ -285,6 +285,20 @@ void Game::compute_blob_position()
 	//glDisable(GL_DEPTH_TEST);
 }
 
+void Game::compute_map_paint()
+{
+	m_shader_compute_paint->use_shader_program();
+	const uvec2 dispatch_count = (m_tex_map.m_size - uvec2(1,1)) / (m_work_group_2d_count)+uvec2(1, 1);
+	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
+	//glFlush();
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
+	//	when uncommented makes map disapear idk why
+	//glDisable(GL_DEPTH_TEST);
+}
+
 void Game::gui(ApplicationUboDataStructure& app_ubo)
 {
 	if (ImGui::Button("Start Game"))
@@ -334,7 +348,7 @@ void Game::gui(ApplicationUboDataStructure& app_ubo)
 		ImGui::SliderFloat("Attraction amplitude", &(m_k_attract), 0.1f, 2.0f);
 		ImGui::SliderFloat("Attraction length", &(m_d_attract), 2.0f, 4.0f);
 
-		ImGui::SliderFloat("Rendering radius", &(m_rendering_radius), 2.0f,4.0f);
+		ImGui::SliderFloat("Rendering radius", &(m_rendering_radius), 2.0f,10.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Game physics "))

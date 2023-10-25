@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
 	proj.set_perspective(70.0f, 0.1f, 5000.0f);//maybe to adjust to scene
 	//WorldView matrix
 	FreeFlyCamera cam; // Maybe this class will be modified to have a "walk" mode (forced just above the ground)
-	cam.set_camera(vec3(0.f,1500.0f,-30.0f),90.f,-90.0f);
+	cam.set_camera(vec3(0.f,1200.0f,-30.0f),90.f,-90.0f);
 	cam.set_params(0.1f,10.f,50.f);
 
 
@@ -82,6 +82,7 @@ int main(int argc, char* argv[]) {
 		game.poll_players_input();
 		game.compute_blob_speed();
 		game.compute_blob_position();
+		game.compute_map_paint();
 
 		game.draw_map();
 		game.draw_blob();

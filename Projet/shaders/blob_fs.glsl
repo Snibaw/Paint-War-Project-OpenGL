@@ -61,11 +61,11 @@ float sphere(vec3 pos,vec3 center, float radius)
 
 float scene(vec3 pos)//The scene we consider in this TP
 {
-	float u = sphere(pos,blob_data[0].p.xyz,20.0);
+	float u = sphere(pos,blob_data[0].p.xyz,blob_physics_params.w);
     
     for (int i=0; i< blob_data.length(); i++)
     {
-        u = min(u,sphere(pos,blob_data[i].p.xyz,20.0));
+        u = min(u,sphere(pos,blob_data[i].p.xyz,blob_physics_params.w));
     }
 	return u;
 }

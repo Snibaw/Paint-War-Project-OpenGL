@@ -40,8 +40,30 @@ layout(std430, binding = 1) readonly buffer SSBO_SCORE
 {
 	uvec4 player_score;
 };
+layout(binding = 0, rgba32f) uniform image2D tex_map;
 
 void main(){
     //change blob position of the players using their speed
     blob_data[gl_GlobalInvocationID.x].p.xyz += blob_data[gl_GlobalInvocationID.x].v.xyz * physics_params.z;
+    //TODO : IMPROVE, simulate collision with map
+    if (blob_data[gl_GlobalInvocationID.x].p.y <blob_physics_params.w)
+        blob_data[gl_GlobalInvocationID.x].p.y = blob_physics_params.w;
+        
+    //to put in map_paint_cs
+    //put color of blob in map
+    ivec2 blob_coord = ivec2(blob_data[gl_GlobalInvocationID.x].p.xz);
+    ivec2 texture_coord_offset = ivec2(map_size.x,map_size.y);
+    ivec2 texel_coord = (blob_coord - texture_coord_offset) / int(map_size.z);
+    
+    float radius = blob_physics_params.w / map_size.z;
+    vec2 center = vec2(texel_coord.x, texel_coord.y);
+    
+    for (float x = center.x - radius; x <= center.x + radius; x += 1.0) {
+        for (float y = center.y - radius; y <= center.y + radius; y += 1.0) {
+            if (distance(vec2(x, y), center) <= radius) {
+                imageStore(tex_map, ivec2(map_dim.x - x, map_dim.y - y), player_color[int(blob_data[gl_GlobalInvocationID.x].p.w)]);
+            }
+        }
+    }
+
 }
