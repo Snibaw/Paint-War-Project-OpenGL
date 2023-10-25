@@ -5,6 +5,7 @@ Game::Game()
 	m_shader_map = new ShaderGLSL("shader_map");
 	m_shader_environment = new ShaderGLSL("shader_background");
 	m_shader_blob_raymarcher = new ShaderGLSL("shader_blob");
+	m_shader_info = new ShaderGLSL("shader_infos");
 
 	m_shader_compute_v = new ShaderGLSL("shader_compute_v");
 	m_shader_compute_p = new ShaderGLSL("shader_compute_p");
@@ -79,6 +80,11 @@ void Game::load_shaders(std::string base_path)
 	m_shader_blob_raymarcher->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_blob_raymarcher);
 	
+	m_shader_info->add_shader(GL_VERTEX_SHADER, base_path, "shaders/infos_vs.glsl"); //changed
+	m_shader_info->add_shader(GL_FRAGMENT_SHADER, base_path, "shaders/infos_fs.glsl");
+	m_shader_info->compile_and_link_to_program();
+	ContextHelper::add_shader_to_hot_reload(m_shader_info);
+	
 	m_shader_compute_v->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/blob_speed_cs.glsl");
 	m_shader_compute_v->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_compute_v);
@@ -90,12 +96,10 @@ void Game::load_shaders(std::string base_path)
 	m_shader_compute_paint->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/map_paint_cs.glsl");
 	m_shader_compute_paint->compile_and_link_to_program();
 	ContextHelper::add_shader_to_hot_reload(m_shader_compute_paint);
-
-	//TODO : uncomment when compute shader are added
-	/*
+	
 	m_shader_count_score->add_shader(GL_COMPUTE_SHADER, base_path, "shaders/score_cs.glsl");
 	m_shader_count_score->compile_and_link_to_program();
-	ContextHelper::add_shader_to_hot_reload(m_shader_count_score);*/
+	ContextHelper::add_shader_to_hot_reload(m_shader_count_score);
 }
 
 
@@ -245,6 +249,14 @@ void Game::draw_blob()
 	glFlush();
 }
 
+void Game::draw_infos()
+{
+	vao_dummy.use_vao();
+	m_shader_info->use_shader_program();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);//2 triangle to draw a quad of the scene
+	glFlush();
+}
+
 
 /*
 void Game::draw_blob()
@@ -289,6 +301,21 @@ void Game::compute_map_paint()
 {
 	m_shader_compute_paint->use_shader_program();
 	const uvec2 dispatch_count = (m_tex_map.m_size - uvec2(1,1)) / (m_work_group_2d_count)+uvec2(1, 1);
+	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
+	//glFlush();
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
+	//	when uncommented makes map disapear idk why
+	//glDisable(GL_DEPTH_TEST);
+}
+
+void Game::compute_score()
+{
+	reset_score();
+	m_shader_count_score->use_shader_program();
+	const uvec2 dispatch_count = (m_tex_map.m_size - uvec2(1,1)) / uvec2(16,16)+uvec2(1, 1); //dont work with m_work_group_2d_count ??
 	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
 	//glFlush();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)

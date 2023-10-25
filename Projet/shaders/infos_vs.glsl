@@ -1,7 +1,5 @@
 #version 460
 #define UBO_APPLICATION_BINDING 0
-layout (location = 0) out vec4 pixel_color;
-
 //matches buffer_structures.hpp
 layout(binding = UBO_APPLICATION_BINDING, std140) uniform UBO_APPLICATION
 {
@@ -27,36 +25,25 @@ layout(binding = UBO_APPLICATION_BINDING, std140) uniform UBO_APPLICATION
     vec4 sun_light;//.xyz: direction, .w:intensity
 };
 
-in vec2 tex_coord;
-in vec3 pos_ws;
 
-layout(binding = 0) uniform sampler2D tex_map;
+out vec2 tex_coord;
 
-//remove when deleting color writing test
-//layout(binding = 0, rgba32f) uniform image2D img_map;
-
-void main() 
-{
-    vec4 data = texture(tex_map,tex_coord);
-    vec3 n = vec3(data.x,sqrt(max(0.0,1.0-data.x*data.x - data.z*data.z)),data.z);
-    float timestamp = data.z;
-    int player_id = int(data.w);
-
-    vec3 color = player_color[player_id].rgb;
-
-    //texture write test
-    /*if (gl_FragCoord.x>150 && gl_FragCoord.x<170 && gl_FragCoord.y>150 && gl_FragCoord.y<170)//center of brush is at screen coords (160,160)
-    {
-        ivec2 texel_coord = ivec2(tex_coord * map_dim.xy);
-        imageStore(img_map,texel_coord,vec4(0.0,0.0,0.0,1.0));
-    }*/
-
-
-
-    if (texture(tex_map,tex_coord).xyz != vec3(0.0,0.0,0.0))
-        pixel_color = texture(tex_map,tex_coord);
-    else
-        pixel_color = vec4(color,1.0);
-
+void main() {
+    if (gl_VertexID == 0) {
+        gl_Position = vec4(-0.2, 0.95, 0.0, 1.0); // Top-left corner
+        tex_coord = vec2(0.0, 1.0);
+    }
+    else if (gl_VertexID == 1) {
+        gl_Position = vec4(.2, .95, 0.0, 1.0); // Top-right corner
+        tex_coord = vec2(1.0, 1.0);
+    }
+    else if (gl_VertexID == 2) {
+        gl_Position = vec4(-.2, .9, 0.0, 1.0); // Bottom-left corner
+        tex_coord = vec2(0.0, 0.0);
+    }
+    else {
+        gl_Position = vec4(.2, .9, 0.0, 1.0); // Bottom-right corner
+        tex_coord = vec2(1.0, 0.0);
+    }
 }
 

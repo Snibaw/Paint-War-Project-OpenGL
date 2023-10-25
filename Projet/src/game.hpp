@@ -26,10 +26,12 @@ public:
 
 	void draw_map();
 	void draw_blob();
+	void draw_infos();
 
 	void compute_blob_speed();
 	void compute_blob_position();
 	void compute_map_paint();
+	void compute_score();
 
 	void gui(ApplicationUboDataStructure& app_ubo);
 
@@ -44,7 +46,7 @@ private:
 	ShaderGLSL* m_shader_environment;//cubemap
 	ShaderGLSL* m_shader_info;//score & time 2D bars
 	ShaderGLSL* m_shader_blob_raymarcher;//blob renderer
-
+	
 	//Compute shaders
 	ShaderGLSL* m_shader_compute_v;//compute speed from forces for each blob
 	ShaderGLSL* m_shader_compute_p;//compute position and collisions from speed for each blob

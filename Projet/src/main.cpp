@@ -83,9 +83,13 @@ int main(int argc, char* argv[]) {
 		game.compute_blob_speed();
 		game.compute_blob_position();
 		game.compute_map_paint();
+		game.compute_score();
+		game.readback_scores();
+		game.console_print_scores();
 
 		game.draw_map();
 		game.draw_blob();
+		game.draw_infos();
 
 		glFinish();//Force wait for GPU to finish jobs, since the post_process shader will read from rendered textures
 
