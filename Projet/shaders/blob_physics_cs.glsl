@@ -43,6 +43,8 @@ layout(std430, binding = 1) readonly buffer SSBO_SCORE
 layout(binding = 0, rgba32f) uniform image2D tex_map;
 
 void main(){
+    if (gl_GlobalInvocationID.x >= map_dim.z) return;
+    
     //change blob position of the players using their speed
     blob_data[gl_GlobalInvocationID.x].p.xyz += blob_data[gl_GlobalInvocationID.x].v.xyz * physics_params.z;
     //TODO : IMPROVE, simulate collision with map
