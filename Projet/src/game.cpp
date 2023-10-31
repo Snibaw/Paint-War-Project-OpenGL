@@ -38,18 +38,24 @@ Game::Game()
 	m_player_input_magnitude = 1000.0f;
 
 	m_ground_friction = 0.01f;
-	m_fluid_friction = 0.01f;
+	m_fluid_friction = 3.0f; //todo changed for smoothing
 	m_bounce_coef = 0.8f;
 
 	m_blob_mass = 1.0f;
 	m_gravity_amplitude = 1.0f;
 	m_delta_t_s = 0.002f;
 
+	// m_k_repulse = 1.0f;
+	// m_d_eq = 2.0f;
+	// m_k_attract = 0.5f;
+	// m_d_attract = 3.0f;
+	// m_rendering_radius = 3.0f;
+
 	m_k_repulse = 1.0f;
-	m_d_eq = 2.0f;
-	m_k_attract = 0.5f;
-	m_d_attract = 3.0f;
-	m_rendering_radius = 3.0f;
+	m_d_eq = 9.0f;
+	m_k_attract = .5f;
+	m_d_attract = 3.f;
+	m_rendering_radius = 10.0f;
 	init_game();
 }
 
@@ -239,6 +245,15 @@ void Game::draw_map()
 	m_shader_environment->use_shader_program();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);//2 triangle to cover the screen and use cubemap for background
 	glFlush();
+
+	//TODO CHANGER DE PLACE + le calcul n'est pas bon car m_delta_t_s n'est pas le temps reel d'une frame
+	m_time_game_s += m_delta_t_s;
+	if (m_time_game_s > m_time_limit_s)
+	{
+		m_game_status = 0;//Game finished
+		m_time_game_s = 0.0f;
+		console_print_scores();
+	}
 }
 
 void Game::draw_blob()
@@ -253,7 +268,7 @@ void Game::draw_infos()
 {
 	vao_dummy.use_vao();
 	m_shader_info->use_shader_program();
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);//2 triangle to draw a quad of the scene
+	glDrawArrays(GL_TRIANGLES, 0, 12);//4 triangle to draw 2 quad of the ui
 	glFlush();
 }
 
@@ -363,19 +378,27 @@ void Game::gui(ApplicationUboDataStructure& app_ubo)
 	if (ImGui::TreeNode("Blob Physics"))
 	{
 		ImGui::SliderFloat("Ground friction", &(m_ground_friction), 0.0f, 0.1f);
-		ImGui::SliderFloat("Fluid friction", &(m_fluid_friction), 0.0f, 0.1f);
+		ImGui::SliderFloat("Fluid friction", &(m_fluid_friction), .5f, 10.f); //todo changed for smoothing
 		ImGui::SliderFloat("Bounce factor", &(m_bounce_coef), 0.0f, 1.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Blob attraction/repulsion"))
 	{
-		ImGui::SliderFloat("Repulsion amplitude", &(m_k_repulse), 0.1f, 2.0f);
+		/*ImGui::SliderFloat("Repulsion amplitude", &(m_k_repulse), 0.1f, 2.0f);
 		ImGui::SliderFloat("Equilibrium length", &(m_d_eq), 0.0f, 2.0f);
 
 		ImGui::SliderFloat("Attraction amplitude", &(m_k_attract), 0.1f, 2.0f);
 		ImGui::SliderFloat("Attraction length", &(m_d_attract), 2.0f, 4.0f);
 
-		ImGui::SliderFloat("Rendering radius", &(m_rendering_radius), 2.0f,10.0f);
+		ImGui::SliderFloat("Rendering radius", &(m_rendering_radius), 2.0f,10.0f);*/
+		
+		ImGui::SliderFloat("Repulsion amplitude", &(m_k_repulse), .1f, 2.0f);
+		ImGui::SliderFloat("Equilibrium length", &(m_d_eq), 0.0f, 75.0f);
+
+		ImGui::SliderFloat("Attraction amplitude", &(m_k_attract), .1f, 5.0f);
+		ImGui::SliderFloat("Attraction length", &(m_d_attract), 2.0f, 40.0f);
+
+		ImGui::SliderFloat("Rendering radius", &(m_rendering_radius), 2.0f,30.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Game physics "))

@@ -132,7 +132,7 @@ void ContextHelper::begin_frame()
 	float avg_frame_time_s = sum_frame_times / float(AVG_VALUES_COUNT);
 	std::stringstream title;
 	title << m_title << " : " << std::fixed << std::setprecision(1) << avg_frame_time_s*1000.0f << " ms | " << 1.0f/ avg_frame_time_s << " fps | " << time_from_start_s << " sec";
-	glfwSetWindowTitle(window, title.str().c_str());
+	//glfwSetWindowTitle(window, title.str().c_str());
 
 
 

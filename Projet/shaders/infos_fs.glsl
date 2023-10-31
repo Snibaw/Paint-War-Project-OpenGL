@@ -69,6 +69,15 @@ void main()
     {
         pixel_color = player_color[3];
     }
+    //for timer
+    else if (tex_coord.x > 1.0f && tex_coord.x - (physics_params.w / map_size.w)>1.0f)
+    {
+        pixel_color = vec4(0.f, 0.f, 0.f, 1.0f);
+    }
+    else if (tex_coord.x > 1.0f && tex_coord.x - (physics_params.w / map_size.w)<1.0f)
+    {
+        pixel_color = vec4(1.f, 1.f, 1.f, 1.0f);
+    }
     else
     {
         pixel_color = player_color[4];

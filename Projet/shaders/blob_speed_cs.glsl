@@ -49,4 +49,52 @@ void main(){
     
     //apply gravity
     blob_data[gl_GlobalInvocationID.x].v.y -= physics_params.x * physics_params.y * 1000; // jsp pq oblige de *1000, a regler dans le parametre de la gravite directement peut etre
+    
+    //apply friction, attraction, repulsion
+    for (int i = 0; i < map_dim.z; i++) {
+        if (i == gl_GlobalInvocationID.x) continue; // Skip self-interaction
+
+        vec3 blobPosA = blob_data[gl_GlobalInvocationID.x].p.xyz;
+        vec3 blobPosB = blob_data[i].p.xyz;
+        float distance = length(blobPosB - blobPosA);
+
+        // Check if blobs are from the same player or not
+        bool samePlayer = blob_data[gl_GlobalInvocationID.x].p.w == blob_data[i].p.w;
+
+        // Calculate repulsion and attraction forces
+        float repulsionForce = 0.0;
+        float attractionForce = 0.0;
+
+//blob_repulsion_params : .x: m_k_repulse : amplitude of repulsion factor
+//                        .y: m_d_eq : equilibrium length (not force)
+//                        .z: m_k_attract : amplitude of attraction factor
+//                        .w: m_d_attract : distance at max attraction force
+
+        if (samePlayer) {
+            // Blobs are from the same player
+            if (distance < blob_repulsion_params.y) {
+                // Repulsion when too close
+                repulsionForce = -blob_repulsion_params.x;
+            } else if (distance > blob_repulsion_params.y /*&& distance < 2.0f*blob_repulsion_params.w - blob_repulsion_params.y*/) {
+                // Attraction at bigger range
+                attractionForce = blob_repulsion_params.z;
+            } else if (distance >= 2.0f*blob_repulsion_params.w - blob_repulsion_params.y) {
+                // No force
+                repulsionForce = 0.0;
+                attractionForce = 0.0;
+            }
+        } else {
+            // Blobs are from different players
+            if (distance < blob_repulsion_params.y*2.5) {
+                // Repulsion when too close
+                repulsionForce = -blob_repulsion_params.x ;
+            }
+        }
+        
+        repulsionForce *=10;
+        attractionForce *=10;
+
+        // Apply the forces to the velocity of blob A
+        blob_data[gl_GlobalInvocationID.x].v.xyz += normalize(blobPosB - blobPosA) * (repulsionForce + attractionForce);
+    }
 }

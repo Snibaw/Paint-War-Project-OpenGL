@@ -41,9 +41,41 @@ void main() {
         gl_Position = vec4(-.2, .9, 0.0, 1.0); // Bottom-left corner
         tex_coord = vec2(0.0, 0.0);
     }
-    else {
+    else if (gl_VertexID == 3){
         gl_Position = vec4(.2, .9, 0.0, 1.0); // Bottom-right corner
         tex_coord = vec2(1.0, 0.0);
+    }
+    else if (gl_VertexID == 4) {
+        gl_Position = vec4(-.2, .9, 0.0, 1.0); // Bottom-left corner
+        tex_coord = vec2(0.0, 0.0);
+    }
+    else if (gl_VertexID == 5) {
+        gl_Position = vec4(.2, .95, 0.0, 1.0); // Top-right corner
+        tex_coord = vec2(1.0, 1.0);
+    }
+    else if (gl_VertexID == 6) {
+        gl_Position = vec4(0.3, 0.95, 0.0, 1.0); // Top-left corner
+        tex_coord = vec2(1.0, 1.0);
+    }
+    else if (gl_VertexID == 7) {
+        gl_Position = vec4(.5, .95, 0.0, 1.0); // Top-right corner
+        tex_coord = vec2(2.0, 1.0);
+    }
+    else if (gl_VertexID == 8) {
+        gl_Position = vec4(.3, .9, 0.0, 1.0); // Bottom-left corner
+        tex_coord = vec2(1.0, 0.0);
+    }
+    else if (gl_VertexID == 9) {
+        gl_Position = vec4(.3, .9, 0.0, 1.0); // Bottom-left corner
+        tex_coord = vec2(1.0, 0.0);
+    }
+    else if (gl_VertexID == 10){
+        gl_Position = vec4(.5, .9, 0.0, 1.0); // Bottom-right corner
+        tex_coord = vec2(2.0, 0.0);
+    }
+    else if (gl_VertexID == 11) {
+        gl_Position = vec4(.5, .95, 0.0, 1.0); // Top-right corner
+        tex_coord = vec2(2.0, 1.0);
     }
 }
 
