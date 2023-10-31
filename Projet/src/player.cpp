@@ -9,8 +9,8 @@ KeyMapping PLAYERS_MAPPING_QWERTY[4] = {
 
 vec4 DEFAUL_COLORS[4] =
 {
-	vec4(1.0f,0.0f,0.0f,0.f),//P1 color
-	vec4(0.0f,1.0f,0.0f,0.f),//P2 color
+	vec4(1.0f,0.0f,0.0f,.1f),//P1 color
+	vec4(0.0f,1.0f,0.0f,.1f),//P2 color
 	vec4(0.0f,0.0f,1.0f,.1f),//P3 color
 	vec4(1.0f,1.0f,0.0f,.1f)//P4 color
 };
