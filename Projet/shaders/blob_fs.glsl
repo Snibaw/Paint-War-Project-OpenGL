@@ -51,9 +51,9 @@ vec3 get_scene_normal(vec3 p);
 
 
 #define MAX_STEPS 400
-#define MIN_DISTANCE 0.1
+#define MIN_DISTANCE 0.5
 #define MAX_DISTANCE 5000.0
-#define MAX_GRADIENT 0.9
+#define MAX_GRADIENT 0.95
 void write_background(vec3 dir);
 //function defining the scene as a SDF, it returns a distance (or pseudo-distance) to the implicit surface
 
@@ -71,17 +71,36 @@ float smooth_min(float a, float b, float k)
     return min(a,b)-h*h*h*k*(1.0/6.0);
 }
 
-float scene(vec3 pos)//The scene we consider in this TP
+float scene(vec3 pos, out int id_player_min)//The scene we consider in this TP
 {
-	float u = sphere(pos,blob_data[0].p.xyz,blob_physics_params.w);
+    vec4 d_blobs = vec4(10.0E20); //distance field of blobs for each player, init to huge
     
     for (int i=0; i< blob_data.length(); i++)
     {
-        //u = min(u,sphere(pos,blob_data[i].p.xyz,blob_physics_params.w));
-        //todo dont forget to change k
-        u = smooth_min(u,sphere(pos,blob_data[i].p.xyz,blob_physics_params.w),blob_physics_params.y);
+        int id = int(blob_data[i].p.w); 
+        d_blobs[id] = smooth_min(d_blobs[id],sphere(pos,blob_data[i].p.xyz,blob_physics_params.w),2.0);
     }
-	return u;
+
+    float d_min = d_blobs[0];
+    id_player_min = 0;
+    
+    if (d_min > d_blobs[1])
+    {
+        d_min = d_blobs[1];
+        id_player_min = 1;
+    }
+    
+    if (d_min > d_blobs[2])
+    {
+        d_min = d_blobs[2];
+        id_player_min = 2;
+    }
+    if (d_min > d_blobs[3])
+    {
+        d_min = d_blobs[3];
+        id_player_min = 3;
+    }
+	return d_min;
 }
 
 
@@ -91,7 +110,7 @@ float scene(vec3 pos)//The scene we consider in this TP
 //if no intersection, it returns background_vector_code to be flagged as background later
 //The marching makes use of scene(position), which defines the distance field of the scene
 //Returns position in WS when reaching the "zero" of the SDF
-vec3 ray_marching(vec3 ray_ori,vec3 ray_dir,out bool back)
+vec3 ray_marching(vec3 ray_ori,vec3 ray_dir,out bool back, out int id_player_min)
 {
     back = false;
     float t=0.0;
@@ -99,7 +118,7 @@ vec3 ray_marching(vec3 ray_ori,vec3 ray_dir,out bool back)
     for (int i=0; i<MAX_STEPS; i++)
     {
         pos = ray_ori + t*ray_dir;
-        float d = scene(pos)*MAX_GRADIENT;
+        float d = scene(pos,id_player_min)*MAX_GRADIENT;
         if (d<MIN_DISTANCE)
         {
             return(pos);
@@ -120,10 +139,11 @@ void main()
 {
     vec3 dir = normalize(dir_ws);
     bool b;
-    vec3 intersection = ray_marching(cam_pos.xyz,dir,b);
+    int id_player;
+    vec3 intersection = ray_marching(cam_pos.xyz,dir,b,id_player);
     //commit de loris float lum = abs(dot(dir,normalize(cam_pos.xyz-intersection)))/2.;
-    //demander pourquoi la map n'est pas prise en compte
-    if (b) discard;
+    //demander pourquoi la map n'est pas prise en compte. Réponse: elle est faite dans un autre shader !
+    if (b) {discard;return;}
     vec3 normal = get_scene_normal(intersection);
     vec3 light_dir = normalize(sun_light.xyz);
     
@@ -167,23 +187,14 @@ void main()
     // Sample the cube map!
     vec4 tex = texture(envmap, normal);
     
-    //give the blob at min distnace from pos
-    int index = 0;
-    for (int i =0; i< blob_data.length(); i++)
-    {
-        if (length(intersection-blob_data[i].p.xyz)<length(intersection-blob_data[index].p.xyz))
-        {
-            index = i;
-        }
-    }
     // Get the colour of the blob as a vec4.
-    vec4 col = vec4(player_color[int(blob_data[index].p.w)].xyz, 1.0);
+    vec4 col = vec4(player_color[id_player].xyz, 1.0);
     // get a random float between 0 and 1
     float rand = fract(sin(dot(intersection, vec3(12.9898, 78.233, 45.5432))) * 43758.5453);
     // Add a random offset to the colour.
     //col += vec4(-rand, rand, rand, 0.0) * 0.3;
     // Get the alpha of the blob.
-    float player_alpha = player_color[int(blob_data[index].p.w)].w;
+    float player_alpha = player_color[id_player].w;
     // Add a random offset to the alpha.
     //player_alpha = index / float(blob_data.length());
     
@@ -228,8 +239,9 @@ vec3 get_scene_normal(vec3 p) // for function f(p)
 {
     const float h = 0.0001; // replace by an appropriate value
     const vec2 k = vec2(1.0,-1.0);
-    return normalize( k.xyy*scene( p + k.xyy*h ) + 
-                      k.yyx*scene( p + k.yyx*h ) + 
-                      k.yxy*scene( p + k.yxy*h ) + 
-                      k.xxx*scene( p + k.xxx*h ) );
+    int useless;
+    return normalize( k.xyy*scene( p + k.xyy*h,useless ) + 
+                      k.yyx*scene( p + k.yyx*h,useless ) + 
+                      k.yxy*scene( p + k.yxy*h,useless ) + 
+                      k.xxx*scene( p + k.xxx*h,useless ) );
 }
