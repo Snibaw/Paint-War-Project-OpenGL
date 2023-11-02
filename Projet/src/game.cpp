@@ -273,17 +273,6 @@ void Game::draw_infos()
 }
 
 
-/*
-void Game::draw_blob()
-{
-	glDisable(GL_DEPTH_TEST);
-	m_shader_blob_raymarcher->use_shader_program();//Shader to draw texture filled in compute shader to screen
-	glDrawArrays(GL_TRIANGLES, 0, 3);//Screen-filling triangle => 1 FS invocation per pixel
-	glEnable(GL_DEPTH_TEST);
-	glFlush();
-}
-*/
-
 void Game::compute_blob_speed()
 {
 	m_shader_compute_v->use_shader_program();
@@ -291,8 +280,6 @@ void Game::compute_blob_speed()
 	glDispatchCompute(dispatch_count, 1, 1);
 	glFlush();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
 	//	when uncommented makes map disapear idk why
 	//glDisable(GL_DEPTH_TEST);
 }
@@ -303,13 +290,8 @@ void Game::compute_blob_position()
 	m_shader_compute_p->use_shader_program();
 	const int dispatch_count = (m_total_blob_count - 1) / 32 + 1;
 	glDispatchCompute(dispatch_count, 1, 1);
-	//glFlush();
+	glFlush();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
-
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
-	//	when uncommented makes map disapear idk why
-	//glDisable(GL_DEPTH_TEST);
 }
 
 void Game::compute_map_paint()
@@ -317,13 +299,8 @@ void Game::compute_map_paint()
 	m_shader_compute_paint->use_shader_program();
 	const uvec2 dispatch_count = (m_tex_map.m_size - uvec2(1,1)) / (m_work_group_2d_count)+uvec2(1, 1);
 	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
-	//glFlush();
+	glFlush();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
-
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
-	//	when uncommented makes map disapear idk why
-	//glDisable(GL_DEPTH_TEST);
 }
 
 void Game::compute_score()
@@ -332,13 +309,9 @@ void Game::compute_score()
 	m_shader_count_score->use_shader_program();
 	const uvec2 dispatch_count = (m_tex_map.m_size - uvec2(1,1)) / uvec2(16,16)+uvec2(1, 1); //dont work with m_work_group_2d_count ??
 	glDispatchCompute(dispatch_count.x, dispatch_count.y, 1);//Dispatch that covers screen 
-	//glFlush();
+	glFlush();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Sync barrier to ensure CS finished (since it is writing to an Image)
 
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear textures from previous frame
-	//	when uncommented makes map disapear idk why
-	//glDisable(GL_DEPTH_TEST);
 }
 
 void Game::gui(ApplicationUboDataStructure& app_ubo)

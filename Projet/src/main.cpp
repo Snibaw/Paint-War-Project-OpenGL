@@ -78,15 +78,18 @@ int main(int argc, char* argv[]) {
 		game.write_params_to_application_struct(app_ubo_data);
 		application_ubo.write_to_gpu(&app_ubo_data);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear Frambuffer channel + Z-buffer
+
 		game.poll_players_input();
 		game.compute_blob_speed();
+
 		game.compute_blob_position();
-		game.compute_map_paint();
+		//game.compute_map_paint();
 		game.compute_score();
-		game.readback_scores();
+		//game.readback_scores();
 		//game.console_print_scores();
 
+		//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);//Sets the screen as the rendering target
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//clear Frambuffer channel + Z-buffer
 		game.draw_map();
 		game.draw_blob();
 		game.draw_infos();

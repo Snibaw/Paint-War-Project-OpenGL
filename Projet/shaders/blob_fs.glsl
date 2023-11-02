@@ -78,7 +78,7 @@ float scene(vec3 pos, out int id_player_min)//The scene we consider in this TP
     for (int i=0; i< blob_data.length(); i++)
     {
         int id = int(blob_data[i].p.w); 
-        d_blobs[id] = smooth_min(d_blobs[id],sphere(pos,blob_data[i].p.xyz,blob_physics_params.w),2.0);
+        d_blobs[id] = smooth_min(d_blobs[id],sphere(pos,blob_data[i].p.xyz,blob_physics_params.w),20.0);
     }
 
     float d_min = d_blobs[0];
@@ -144,6 +144,7 @@ void main()
     //commit de loris float lum = abs(dot(dir,normalize(cam_pos.xyz-intersection)))/2.;
     //demander pourquoi la map n'est pas prise en compte. Réponse: elle est faite dans un autre shader !
     if (b) {discard;return;}
+    
     vec3 normal = get_scene_normal(intersection);
     vec3 light_dir = normalize(sun_light.xyz);
     
