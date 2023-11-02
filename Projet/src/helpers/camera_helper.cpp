@@ -1,5 +1,5 @@
 #include "camera_helper.hpp"
-
+float Trackball::m_dist;
 
 ProjectionMatrix::ProjectionMatrix()
 {
@@ -162,5 +162,90 @@ void FreeFlyCamera::flush()
 }
 
 
+Trackball::Trackball()
+{
+	m_mouse_coords = glm::vec2(0.0f);
+	m_w_v = glm::mat4(1.0f);
+	m_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_mouse_radians_per_pixel = 0.01f;
+	m_boost_multiplier = 2.0f;
+	m_forward = glm::vec3(1.0f, 0.0f, 0.0f);
+	m_up = glm::vec3(0.0f, 1.0f, 0.0f);
+	m_right = glm::vec3(0.0f, 0.0f, 1.0f);
+	m_theta = 0.0f;
+	m_phi = 0.0f;
+	m_dist = 5.0f;
+	m_focus = glm::vec3(0.0f, 0.0f, 0.0f);
+}
 
+void Trackball::set_camera(float dist,const glm::vec3 focus, float theta, float phi)
+{
+	m_dist = dist;
+	m_theta = glm::radians(theta);
+	m_phi = glm::radians(phi);
+	build_basis();
+
+	double mouse_x, mouse_y;
+	glfwGetCursorPos(ContextHelper::window, &mouse_x, &mouse_y);
+	m_mouse_coords = glm::vec2((float)mouse_x, (float)mouse_y);
+}
+
+void Trackball::build_basis()
+{
+	float ct = glm::cos(m_theta);
+	float st = glm::sin(m_theta);
+	float cp = glm::cos(m_phi);
+	float sp = glm::sin(m_phi);
+
+	m_forward.x = ct * cp;
+	m_forward.y = sp;
+	m_forward.z = st * cp;
+	m_right = glm::normalize(glm::cross(m_up, m_forward));
+	m_pos = m_focus - m_forward * m_dist;
+	m_w_v = glm::lookAt(m_pos, m_pos + m_forward, m_up);
+}
+
+void Trackball::set_params(const float mouse_degree_per_pixel, const float boost_multiplier)
+{
+	m_mouse_radians_per_pixel = glm::radians(mouse_degree_per_pixel);
+	m_boost_multiplier = boost_multiplier;
+}
+
+void Trackball::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (yoffset > 0.0)
+		m_dist *= 1.1;
+	if (yoffset < 0.0)
+		m_dist /= 1.1;
+}
+
+
+
+void Trackball::flush()
+{
+	glm::vec2 delta_mouse = glm::vec2(0.0f);
+	double mouse_x, mouse_y;
+	glfwGetCursorPos(ContextHelper::window, &mouse_x, &mouse_y);
+
+	//glfwSetInputMode(ContextHelper::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	//if (glfwGetMouseButton(ContextHelper::window, GLFW_MOUSE_BUTTON_) == GLFW_PRESS)
+	glfwSetScrollCallback(ContextHelper::window, Trackball::scroll_callback);
+
+	if (glfwGetMouseButton(ContextHelper::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		delta_mouse.x = (float)mouse_x - m_mouse_coords.x;
+		delta_mouse.y = (float)mouse_y - m_mouse_coords.y;
+	}
+	m_mouse_coords.x = (float)mouse_x;
+	m_mouse_coords.y = (float)mouse_y;
+
+	if (glfwGetKey(ContextHelper::window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		delta_mouse *= m_boost_multiplier;
+
+	m_theta -= delta_mouse.x * m_mouse_radians_per_pixel;
+	m_phi = glm::clamp(m_phi - delta_mouse.y * m_mouse_radians_per_pixel, -3.13f * 0.5f, -3.13f * 0.02f);
+
+
+	build_basis();
+}
 

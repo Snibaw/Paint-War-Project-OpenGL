@@ -29,11 +29,11 @@ int main(int argc, char* argv[]) {
 	//Projection matrix
 	ProjectionMatrix proj;
 	proj.set_viewport_resolution(ContextHelper::resolution);
-	proj.set_perspective(70.0f, 0.1f, 5000.0f);//maybe to adjust to scene
+	proj.set_perspective(50.0f, 0.1f, 5000.0f);//maybe to adjust to scene
 	//WorldView matrix
-	FreeFlyCamera cam; // Maybe this class will be modified to have a "walk" mode (forced just above the ground)
-	cam.set_camera(vec3(0.f,900.0f,-30.0f),90.f,-89.0f);
-	cam.set_params(0.1f,10.f,50.f);
+	Trackball cam; // Maybe this class will be modified to have a "walk" mode (forced just above the ground)
+	cam.set_camera(2000.0f,vec3(0.f),90.f,-89.0f);
+	cam.set_params(0.1f);
 
 
 	Game game;

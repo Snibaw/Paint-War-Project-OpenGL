@@ -52,6 +52,29 @@ private:
 	glm::vec2 m_mouse_coords;
 	bool m_lock_mouse_mode;
 };
+//void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+class Trackball {
+public:
+	Trackball();
+	void set_camera(float dist = 30.0f,const glm::vec3 focus = glm::vec3(0.0f),float theta_deg = 90.0f, float phi_deg = 0.0f);
+	void set_params(const float mouse_degree_per_pixel = 0.1f, const float boost_multiplier = 20.0f);
+	void flush();//Call once per main loop
+	glm::mat4 m_w_v;//world view matrix
+	glm::vec3 m_pos;
+	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+private:
+	void build_basis();
+	float m_theta;
+	float m_phi;
+	static float m_dist;
+	glm::vec3 m_focus;
+	glm::vec3 m_forward;
+	glm::vec3 m_right;
+	glm::vec3 m_up;
+	float m_mouse_radians_per_pixel;
+	float m_boost_multiplier;
+	glm::vec2 m_mouse_coords;
+};
 
 #endif
 
