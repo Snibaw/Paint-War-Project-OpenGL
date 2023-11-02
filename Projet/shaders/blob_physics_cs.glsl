@@ -32,7 +32,7 @@ struct Blob {//Mind GPU alignment !
 	vec4 v;//speed
 };
 
-layout(std430, binding = 0) buffer SSBO_BLOBS_DATA
+layout(std430, binding = 0) restrict buffer SSBO_BLOBS_DATA
 {
 	Blob blob_data[];
 };
@@ -40,33 +40,77 @@ layout(std430, binding = 1) readonly buffer SSBO_SCORE
 {
 	uvec4 player_score;
 };
-layout(binding = 0, rgba32f) uniform image2D tex_map;
+layout(binding = 0, rgba32f) uniform writeonly image2D tex_map;
 
 void main(){
-    if (gl_GlobalInvocationID.x >= map_dim.z) return;
+    uint pid = gl_GlobalInvocationID.x;
+
+    if (pid >= map_dim.z) return;
     
     //change blob position of the players using their speed
-    blob_data[gl_GlobalInvocationID.x].p.xyz += blob_data[gl_GlobalInvocationID.x].v.xyz * physics_params.z;
-    //TODO : IMPROVE, simulate collision with map
-    if (blob_data[gl_GlobalInvocationID.x].p.y <blob_physics_params.w*0.5)
-        blob_data[gl_GlobalInvocationID.x].p.y = blob_physics_params.w*0.5;
+    vec3 p = blob_data[pid].p.xyz;
+    vec3 v = blob_data[pid].v.xyz;
+
+    p = p + v * physics_params.z;
+
+    float wall = blob_physics_params.w*0.5;
+    if (p.y < wall)// ground test
+    {
+        v.y *= -blob_physics_params.z;// reverse speed with bounce
+        p.y = wall;//set position to floor
+    }
+
+    //.X walls
+    wall = map_size.x + blob_physics_params.w*0.5;
+    if (p.x < wall)// ground test
+    {
+        v.x *= -blob_physics_params.z;
+        p.x = wall;
+    }
+    wall = -map_size.x - blob_physics_params.w*0.5;
+    if (p.x > wall)// ground test
+    {
+        v.x *= -blob_physics_params.z;// reverse speed with bounce
+        p.x = wall;
+    }
+
+    //.Z walls
+    wall = map_size.y + blob_physics_params.w*0.5;
+    if (p.z < wall)// ground test
+    {
+        v.z *= -blob_physics_params.z;// reverse speed with bounce
+        p.z = wall;
+    }
+    wall = -map_size.y - blob_physics_params.w*0.5;
+    if (p.z > wall)// ground test
+    {
+        v.z *= -blob_physics_params.z;// reverse speed with bounce
+        p.z = wall;
+    }
+    blob_data[pid].p.xyz = p;
+    blob_data[pid].v.xyz = v;
+
+
+
         
     //to put in map_paint_cs
     //put color of blob in map
-    ivec2 blob_coord = ivec2(blob_data[gl_GlobalInvocationID.x].p.xz);
-    ivec2 texture_coord_offset = ivec2(map_size.x,map_size.y);
-    ivec2 texel_coord = (blob_coord - texture_coord_offset) / int(map_size.z);
     
-    float radius = sqrt(max(0.0,blob_physics_params.w*blob_physics_params.w -blob_data[gl_GlobalInvocationID.x].p.y*blob_data[gl_GlobalInvocationID.x].p.y ))/ map_size.z ;
-    vec2 center = vec2(texel_coord.x, texel_coord.y);
+    
+    float radius = sqrt(max(0.0,blob_physics_params.w*blob_physics_params.w -p.y*p.y ))/ map_size.z ;
+    float radius_sq = radius * radius;
+    vec2 center = (p.xz -map_size.xy) /map_size.z;
+    uint id = uint(blob_data[gl_GlobalInvocationID.x].p.w);
     if (radius>0.0)
     {
-        for (float x = center.x - radius; x <= center.x + radius; x += 1.0) {
-            for (float y = center.y - radius; y <= center.y + radius; y += 1.0) {
-                if (distance(vec2(x, y), center) <= radius) {
-                    imageStore(tex_map, ivec2(map_dim.x - x, map_dim.y - y), player_color[int(blob_data[gl_GlobalInvocationID.x].p.w)]);
+        for (float x = center.x - radius; x <= center.x + radius; x += 1.0) 
+        for (float y = center.y - radius; y <= center.y + radius; y += 1.0) 
+        {
+            vec2 diff = vec2(x, y) - center;
+                if (dot(diff,diff) <= radius_sq) //compare squared radius: avoid sqrt
+                {
+                    imageStore(tex_map, ivec2(map_dim.x - x, map_dim.y - y), player_color[id]);
                 }
-            }
         }
     }
 

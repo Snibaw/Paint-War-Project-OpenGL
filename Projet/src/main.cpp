@@ -23,7 +23,7 @@
 
 int main(int argc, char* argv[]) {
 
-	ContextHelper::init_context_all(1440, 900, "Paint War",8);
+	ContextHelper::init_context_all(1440, 900, "Paint War",8,0);
 	ContextHelper::print_opengl_info();
 
 	//Projection matrix

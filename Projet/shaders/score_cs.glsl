@@ -48,6 +48,9 @@ void main() {
     if (map_dim.x <= gl_GlobalInvocationID.x || map_dim.y <= gl_GlobalInvocationID.y) {
         return;
     }
+
+
+    
     //add 1 to player score if the color of the texel is the same as the player
     if (imageLoad(tex_map, ivec2(gl_GlobalInvocationID.xy)) == (player_color[4])) {
         return;
