@@ -43,7 +43,7 @@ Game::Game()
 
 	m_blob_mass = 1.0f;
 	m_gravity_amplitude = 1.0f;
-	m_delta_t_s = 0.002f;
+	m_delta_t_s = 0.004f;
 
 	// m_k_repulse = 1.0f;
 	// m_d_eq = 2.0f;

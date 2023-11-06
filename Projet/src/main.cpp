@@ -80,9 +80,14 @@ int main(int argc, char* argv[]) {
 
 
 		game.poll_players_input();
-		game.compute_blob_speed();
 
-		game.compute_blob_position();
+
+		for (float i = ContextHelper::time_from_start_s; i < ContextHelper::time_from_start_s + ContextHelper::time_frame_s; i += app_ubo_data.physics_params.z)
+		{
+			game.compute_blob_speed();
+			game.compute_blob_position();
+		}
+
 		//game.compute_map_paint();
 		game.compute_score();
 		//game.readback_scores();
